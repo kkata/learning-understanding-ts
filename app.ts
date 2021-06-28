@@ -1,32 +1,15 @@
-// const ADMIN = 0;
-// const READ_ONLY = 1;
-// const AUTHOR = 2;
-
-// enum
-enum Role {
-  ADMIN = 5,
-  READ_ONLY = "",
-  AUTHOR = 1,
+function combine(input1: number | string, input2: number | string) {
+  let result;
+  if (typeof input1 === "number" && typeof input2 === "number") {
+    result = input1 + input2;
+  } else {
+    result = input1.toString() + input2.toString();
+  }
+  return result;
 }
 
-console.table(Role);
+const combinedAges = combine(30, 25);
+console.log(combinedAges);
 
-const person = {
-  name: "yota",
-  age: 30,
-  hobbies: ["Sports", "Cooking"],
-  role: Role.ADMIN,
-};
-
-// not error
-// person.role.push("admin");
-
-// error
-// person.role[1] = 10;
-// person.role = [0, "admin", 100];
-
-console.table(person);
-
-if (person.role === Role.ADMIN) {
-  console.log("管理者ユーザ");
-}
+const combineNames = combine("Max", "Anna");
+console.log(combineNames);

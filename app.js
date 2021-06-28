@@ -1,27 +1,15 @@
 "use strict";
-// const ADMIN = 0;
-// const READ_ONLY = 1;
-// const AUTHOR = 2;
-// enum
-var Role;
-(function (Role) {
-    Role[Role["ADMIN"] = 5] = "ADMIN";
-    Role["READ_ONLY"] = "";
-    Role[Role["AUTHOR"] = 1] = "AUTHOR";
-})(Role || (Role = {}));
-console.table(Role);
-var person = {
-    name: "yota",
-    age: 30,
-    hobbies: ["Sports", "Cooking"],
-    role: Role.ADMIN,
-};
-// not error
-// person.role.push("admin");
-// error
-// person.role[1] = 10;
-// person.role = [0, "admin", 100];
-console.table(person);
-if (person.role === Role.ADMIN) {
-    console.log("管理者ユーザ");
+function combine(input1, input2) {
+    var result;
+    if (typeof input1 === "number" && typeof input2 === "number") {
+        result = input1 + input2;
+    }
+    else {
+        result = input1.toString() + input2.toString();
+    }
+    return result;
 }
+var combinedAges = combine(30, 25);
+console.log(combinedAges);
+var combineNames = combine("Max", "Anna");
+console.log(combineNames);
