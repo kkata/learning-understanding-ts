@@ -1,13 +1,23 @@
 class Department {
+  // staticプロパティやメソッドはクラスの中からアクセスできない。
+  static fiscalYear = 2020;
+
   // private readonly id: string;
   // name: string;
   // protectedでサブクラスからアクセスできるようになる
   protected employees: string[] = [];
 
+  static createEmploee(name: string) {
+    return { name: name };
+  }
+
   // constructorのアクセス装飾子は省略しない
   constructor(private readonly id: string, public name: string) {
     // this.id = id;
     // this.name = name;
+
+    // アクセスするにはクラス名も指定する
+    console.log(Department.fiscalYear);
   }
 
   // thisを型付けする
@@ -72,6 +82,9 @@ class AccountingDepartment extends Department {
     this.employees.push(name);
   }
 }
+
+const employee1 = Department.createEmploee("Max");
+console.log("employee1", employee1, Department.fiscalYear);
 
 const it = new ITDepartment("d1", ["Max"]);
 
