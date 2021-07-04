@@ -1,4 +1,5 @@
-class Department {
+// abstractクラスはインスタンス化できない
+abstract class Department {
   // staticプロパティやメソッドはクラスの中からアクセスできない。
   static fiscalYear = 2020;
 
@@ -12,7 +13,7 @@ class Department {
   }
 
   // constructorのアクセス装飾子は省略しない
-  constructor(private readonly id: string, public name: string) {
+  constructor(protected readonly id: string, public name: string) {
     // this.id = id;
     // this.name = name;
 
@@ -20,10 +21,13 @@ class Department {
     console.log(Department.fiscalYear);
   }
 
+  // abstractクラスはサブクラスでメソッドの実装を強制する
+  abstract describe(this: Department): void;
+
   // thisを型付けする
-  describe(this: Department) {
-    console.log(`Department ${this.id}: ${this.name}`);
-  }
+  // describe(this: Department) {
+  //   console.log(`Department ${this.id}: ${this.name}`);
+  // }
 
   addEmployee(employee: string) {
     // 代入できない
@@ -41,6 +45,10 @@ class ITDepartment extends Department {
   constructor(id: string, admins: string[]) {
     super(id, "IT");
     this.admins = admins;
+  }
+
+  describe() {
+    console.log("IT部門 - ID: " + this.id);
   }
 }
 
@@ -64,6 +72,10 @@ class AccountingDepartment extends Department {
   constructor(id: string, private reports: string[]) {
     super(id, "Accounting");
     this.lastReport = reports[0];
+  }
+
+  describe() {
+    console.log("会計部門 - ID: " + this.id);
   }
 
   addReport(text: string) {
@@ -103,12 +115,14 @@ const accounting = new AccountingDepartment("a1", []);
 
 accounting.mostRecentReport = "通期会計レポート";
 accounting.addReport("Something");
-console.log(accounting.mostRecentReport);
-accounting.printReports();
+// console.log(accounting.mostRecentReport);
+// accounting.printReports();
 
 accounting.addEmployee("Max");
 accounting.addEmployee("Manu");
-accounting.printEmployeeInformation();
+// accounting.printEmployeeInformation();
+
+accounting.describe();
 
 // const itCopy = { name: "Dummy", describe: it.describe };
 // itCopy.describe();
