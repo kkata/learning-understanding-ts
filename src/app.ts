@@ -54,6 +54,7 @@ class ITDepartment extends Department {
 
 class AccountingDepartment extends Department {
   private lastReport: string;
+  private static instance: AccountingDepartment;
 
   get mostRecentReport() {
     if (this.lastReport) {
@@ -69,9 +70,17 @@ class AccountingDepartment extends Department {
     this.addReport(value);
   }
 
-  constructor(id: string, private reports: string[]) {
+  // privateコンストラクタとstaticメソッドでシングルトンを実装
+  private constructor(id: string, private reports: string[]) {
     super(id, "Accounting");
     this.lastReport = reports[0];
+  }
+
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+    return (this.instance = new AccountingDepartment("d2", []));
   }
 
   describe() {
@@ -111,7 +120,11 @@ it.describe();
 
 console.log(it);
 
-const accounting = new AccountingDepartment("a1", []);
+// const accounting = new AccountingDepartment("a1", []);
+const accounting = AccountingDepartment.getInstance();
+const accounting2 = AccountingDepartment.getInstance();
+// 2つとも同じオブジェクト
+console.log(accounting, accounting2);
 
 accounting.mostRecentReport = "通期会計レポート";
 accounting.addReport("Something");
