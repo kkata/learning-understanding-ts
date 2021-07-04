@@ -1,7 +1,8 @@
 class Department {
   // private readonly id: string;
   // name: string;
-  private employees: string[] = [];
+  // protectedでサブクラスからアクセスできるようになる
+  protected employees: string[] = [];
 
   // constructorのアクセス装飾子は省略しない
   constructor(private readonly id: string, public name: string) {
@@ -45,6 +46,13 @@ class AccountingDepartment extends Department {
   printReports() {
     console.log(this.reports);
   }
+
+  addEmployee(name: string) {
+    if (name === "Max") {
+      return;
+    }
+    this.employees.push(name);
+  }
 }
 
 const it = new ITDepartment("d1", ["Max"]);
@@ -64,6 +72,10 @@ const accounting = new AccountingDepartment("a1", []);
 
 accounting.addReport("Something");
 accounting.printReports();
+
+accounting.addEmployee("Max");
+accounting.addEmployee("Manu");
+accounting.printEmployeeInformation();
 
 // const itCopy = { name: "Dummy", describe: it.describe };
 // itCopy.describe();
