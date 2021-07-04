@@ -1,10 +1,10 @@
 class Department {
-  // private id: string;
+  // private readonly id: string;
   // name: string;
   private employees: string[] = [];
 
   // constructorのアクセス装飾子は省略しない
-  constructor(private id: string, public name: string) {
+  constructor(private readonly id: string, public name: string) {
     // this.id = id;
     // this.name = name;
   }
@@ -15,6 +15,8 @@ class Department {
   }
 
   addEmployee(employee: string) {
+    // 代入できない
+    // this.id= 'd3'
     this.employees.push(employee);
   }
   printEmployeeInformation() {
