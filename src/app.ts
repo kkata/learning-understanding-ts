@@ -1,14 +1,17 @@
 class Department {
-  name: string;
+  // private id: string;
+  // name: string;
   private employees: string[] = [];
 
-  constructor(n: string) {
-    this.name = n;
+  // constructorのアクセス装飾子は省略しない
+  constructor(private id: string, public name: string) {
+    // this.id = id;
+    // this.name = name;
   }
 
   // thisを型付けする
   describe(this: Department) {
-    console.log("Department: " + this.name);
+    console.log(`Department ${this.id}: ${this.name}`);
   }
 
   addEmployee(employee: string) {
@@ -20,7 +23,7 @@ class Department {
   }
 }
 
-const accounting = new Department("accounting");
+const accounting = new Department("d1", "accounting");
 
 accounting.addEmployee("Max");
 accounting.addEmployee("Manu");
