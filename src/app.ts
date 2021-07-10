@@ -23,12 +23,17 @@ type Numeric = number | boolean;
 // number型になる
 type Universal = Combinable & Numeric;
 
+function add2(a: number, b: number): number;
+function add2(a: string, b: string): string;
 function add2(a: Combinable, b: Combinable) {
   if (typeof a === "string" || typeof b === "string") {
     return a.toString() + b.toString();
   }
   return a + b;
 }
+
+const result = add2("Hello", " TypeScript");
+result.split(" ");
 
 type UnknownEmployee = Employee | Admin;
 
