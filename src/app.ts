@@ -1,4 +1,5 @@
 function Logger(LogString: string) {
+  console.log("LOGGER ファクトリ");
   return function (constructor: Function) {
     console.log(LogString);
     console.log(constructor);
@@ -6,8 +7,10 @@ function Logger(LogString: string) {
 }
 
 function WithTemplate(template: string, hookId: string) {
+  console.log("TEMPLATE　ファクトリ");
   // return function (_: Function) {
   return function (constructor: any) {
+    console.log("テンプレートを表示");
     const hookEl = document.getElementById(hookId);
     const p = new constructor();
     if (hookEl) {
@@ -17,7 +20,10 @@ function WithTemplate(template: string, hookId: string) {
   };
 }
 
+// デコレータ関数の作成は上から下
+// でコレータ関数の実行は下から上
 // @Logger("ログ出力中 - PERSON")
+@Logger("ログ出力中")
 @WithTemplate("<h1>Personオブジェクト</h1>", "app")
 class Person2 {
   name = "Max";
