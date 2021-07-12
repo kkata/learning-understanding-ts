@@ -74,3 +74,33 @@ const numberStorage = new DataStorage<number>();
 // objStorage.addItem({ name: "Manu" });
 // objStorage.removeItem(obj);
 // console.log(objStorage.getItem());
+
+// Generic型のユーティリティ
+// cf. https://www.typescriptlang.org/docs/handbook/utility-types.html
+interface CourseGoal {
+  title: string;
+  description: string;
+  completeUntil: Date;
+}
+
+function createCourseGoal(
+  title: string,
+  description: string,
+  date: Date
+): CourseGoal {
+  // Partial型で一時的に任意の型に切り替える
+  let courseGoal: Partial<CourseGoal> = {};
+  courseGoal.title = title;
+  courseGoal.description = description;
+  courseGoal.completeUntil = date;
+  return courseGoal as CourseGoal;
+  // return {
+  //   title: title,
+  //   description: description,
+  //   completeUntil: date,
+  // };
+}
+
+const names2: Readonly<string[]> = ["Max", "Anna"];
+// names2.push("Manu");
+// names2.pop();
