@@ -126,3 +126,40 @@ const p = new Printer();
 
 const button = document.querySelector("button")!;
 button.addEventListener("click", p.showMessage);
+
+// ---
+// デコレータによるバリデーション実装
+
+function Required() {}
+
+function PositiveNumber() {}
+
+function validate(obj: object) {}
+class Course {
+  @Required
+  title: string;
+  @PositiveNumber
+  price: number;
+  constructor(t: string, p: number) {
+    this.title = t;
+    this.price = p;
+  }
+}
+
+const courseForm = document.querySelector("form")!;
+courseForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const titleEl = document.getElementById("title") as HTMLInputElement;
+  const priceEl = document.getElementById("price") as HTMLInputElement;
+
+  const title = titleEl.value;
+  const price = priceEl.valueAsNumber;
+
+  const createCourse = new Course(title, price);
+  if (!validate(createCourse)) {
+    alert("正しく入力してください");
+    return;
+  }
+
+  console.log(createCourse);
+});
