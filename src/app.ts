@@ -58,7 +58,7 @@ interface Validatable {
   max?: number;
 }
 
-function validate(validatableInput: Validatable) {
+function validate2(validatableInput: Validatable) {
   let isValid = true;
   if (validatableInput.required) {
     isValid = isValid && validatableInput.value.toString().trim().length !== 0;
@@ -216,9 +216,9 @@ class ProjectInput {
     };
 
     if (
-      !validate(titleValidatable) ||
-      !validate(descriptionValidatable) ||
-      !validate(mandayValidatable)
+      !validate2(titleValidatable) ||
+      !validate2(descriptionValidatable) ||
+      !validate2(mandayValidatable)
     ) {
       alert("入力値が正しくありません。再度お試しください。");
       return;
