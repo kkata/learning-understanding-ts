@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "run-p serve watch:ts",
+    "start": "webpack serve",
     "watch:ts": "tsc -w",
     "serve": "lite-server",
     "build": "webpack"
