@@ -7,12 +7,13 @@
     "start": "webpack serve",
     "watch:ts": "tsc -w",
     "serve": "lite-server",
-    "build": "webpack"
+    "build": "webpack --config webpack.config.prod.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
     "lite-server": "^2.6.1",
     "npm-run-all": "^4.1.5",
     "ts-loader": "^9.2.3",
