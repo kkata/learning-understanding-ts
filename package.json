@@ -6,7 +6,8 @@
   "scripts": {
     "start": "run-p serve watch:ts",
     "watch:ts": "tsc -w",
-    "serve": "lite-server"
+    "serve": "lite-server",
+    "build": "webpack"
   },
   "keywords": [],
   "author": "",
