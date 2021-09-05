@@ -1,7 +1,8 @@
 class Department {
   // private it: string;
   // name: string;
-  private employees: string[] = [];
+  // protectedはサブクラスからもアクセス可能
+  protected employees: string[] = [];
 
   constructor(private readonly id: string, public name: string) {
     // this.it = it;
@@ -40,6 +41,13 @@ class AccountingDepartment extends Department {
   printReports() {
     console.log(this.reports);
   }
+
+  addEmployee(name: string) {
+    if (name === "Max") {
+      return;
+    }
+    this.employees.push(name);
+  }
 }
 
 const it = new ITDepartment("d1", ["Max"]);
@@ -57,6 +65,12 @@ console.log(it);
 const accounting = new AccountingDepartment("d2", []);
 accounting.addReport("Something");
 accounting.printReports();
+
+accounting.addEmployee("Max");
+accounting.addEmployee("Manu");
+
+accounting.printEmployeeInformation();
+
 console.log(accounting);
 
 // const itCopy = { name: "DUMMY", describe: it.describe };
