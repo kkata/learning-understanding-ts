@@ -1,44 +1,44 @@
-import { Loader } from "@googlemaps/js-api-loader";
-
-const form = document.querySelector("form")!;
-const addressInput = document.getElementById("address")! as HTMLInputElement;
-const mapElement = document.getElementById("map")! as HTMLDivElement;
-
-const GOOGLE_GEOCODING_API_KEY = process.env.GOOGLE_GEOCODING_API_KEY ?? "";
-
-const loader = new Loader({
-  apiKey: GOOGLE_GEOCODING_API_KEY,
-});
-
-function searchAddressHandler(event: Event) {
-  event.preventDefault();
-  const enteredAddress = addressInput.value;
-
-  loader
-    .load()
-    .then((google) => {
-      const geocoder = new google.maps.Geocoder();
-
-      geocoder.geocode({ address: enteredAddress }, (results, status) => {
-        if (status === "OK" && results![0].geometry?.location !== undefined) {
-          const location = results![0].geometry?.location;
-          const position = { lat: location.lat(), lng: location.lng() };
-          const map = new google.maps.Map(mapElement, {
-            center: position,
-            zoom: 16,
-          });
-          new google.maps.Marker({
-            position: position,
-            map,
-          });
-        } else {
-          throw new Error("座標を取得できませんでした");
-        }
-      });
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+// type AddFn = (a: number, b: number) => number;
+interface AddFn {
+  (a: number, b: number): number;
 }
 
-form?.addEventListener("submit", searchAddressHandler);
+let add: AddFn;
+
+add = (n1: number, n2: number) => {
+  return n1 + n2;
+};
+
+interface Named {
+  readonly name?: string;
+  outputName?: string;
+}
+
+interface Greetable extends Named {
+  greet(phrase: string): void;
+}
+
+class Person implements Greetable {
+  name?: string;
+  age = 30;
+  constructor(n?: string) {
+    if (n) {
+      this.name = n;
+    }
+  }
+
+  greet(phrase: string) {
+    if (this.name) {
+      console.log(phrase + " " + this.name);
+    } else {
+      console.log("Hi!");
+    }
+  }
+}
+
+let user1: Greetable;
+
+user1 = new Person();
+
+user1.greet("Hello I am");
+console.log(user1);
