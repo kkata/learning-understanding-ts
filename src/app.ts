@@ -13,7 +13,8 @@
 // });
 
 // TとUは関数を呼び出したときに推定される
-function merge<T, U>(obgA: T, objB: U) {
+// extends で制約を付けられる
+function merge<T extends object, U extends object>(obgA: T, objB: U) {
   return Object.assign(obgA, objB);
 }
 
