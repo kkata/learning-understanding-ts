@@ -78,3 +78,29 @@ const textStorage = new DataStorage<string>();
 
 // objStorage.removeItem({ name: "Max" }); // objectは参照型なのでこれは上の{ name: "Max" }とは別のオブジェクト
 // console.log(objStorage.getItems()); // { name: "Max" }は削除されていない
+
+interface CourseGoal {
+  title: string;
+  description: string;
+  completeUntil: Date;
+}
+
+function createCourseGoal(
+  title: string,
+  description: string,
+  date: Date
+): CourseGoal {
+  let courseGoal: Partial<CourseGoal> = {}; // ユーティリティ型のPartialで一時的に型を切り替える
+  courseGoal.title = title;
+  courseGoal.description = description;
+  courseGoal.completeUntil = date;
+  return courseGoal as CourseGoal;
+  // return {
+  //   title: title,
+  //   description: description,
+  //   completeUntil: date,
+  // };
+}
+
+const names: Readonly<string>[] = ["Max", "Anna"];
+// names.push("Manu");
