@@ -1,145 +1,108 @@
-type Admin = {
-  name: string;
-  privileges: string[];
-};
+// const names: Array<string> = []; // string[]
 
-type Employee = {
-  name: string;
-  startDate: Date;
-};
-
-type ElevatedEmployee = Admin & Employee;
-
-const e1: ElevatedEmployee = {
-  name: "Max",
-  privileges: ["create-server"],
-  startDate: new Date(),
-};
-
-type Combinable = string | number;
-type Numeric = number | boolean;
-
-type Universal = Combinable & Numeric;
-
-function add(a: number, b: number): number;
-function add(a: string, b: string): string;
-function add(a: string, b: number): string;
-function add(a: number, b: string): string;
-function add(a: Combinable, b: Combinable) {
-  if (typeof a === "string" || typeof b === "string") {
-    return a.toString() + b.toString();
-  }
-  return a + b;
-}
-
-const result = add("Hello", "TypeScript");
-result.split(" ");
-
-const fetchedUserData = {
-  id: "u1",
-  name: "user1",
-  job: {
-    title: "Developer",
-    description: "TypeScript",
-  },
-};
-
-console.log(fetchedUserData?.job?.title);
-
-const userInput = undefined;
-
-const storedData = userInput ?? "DEFAULT"; // null or undefinedの場合
-
-console.log(storedData);
-
-// type UnknownEmployee = Employee | Admin;
-
-// function printEmployeeInformation(emp: UnknownEmployee) {
-//   console.log(emp.name);
-//   if ("privileges" in emp) {
-//     console.log("Privileges: " + emp.privileges);
-//   }
-//   if ("startDate" in emp) {
-//     console.log("Start Date: " + emp.startDate);
-//   }
-// }
-
-// printEmployeeInformation({
-//   name: "Max",
-//   startDate: new Date(),
+// // promiseは他の型も返すので、それをGeneric型で定義する
+// // 戻り値の型がわかることで、TypeScriptのサポートが利くようになる
+// const promise: Promise<string> = new Promise((resolve, reject) => {
+//   setTimeout(() => {
+//     resolve("Done!");
+//   });
 // });
 
-// class Car {
-//   drive() {
-//     console.log("運転中...");
-//   }
-// }
+// promise.then((data) => {
+//   data.split("");
+// });
 
-// class Truck {
-//   drive() {
-//     console.log("トラックを運転中...");
-//   }
+// TとUは関数を呼び出したときに推定される
+// extends で制約を付けられる
+function merge<T extends object, U extends object>(obgA: T, objB: U) {
+  return Object.assign(obgA, objB);
+}
 
-//   loadCargo(amount: number) {
-//     console.log("荷物を載せています..." + amount);
-//   }
-// }
+const mergedObj = merge({ name: "Max", hobbies: ["Sports"] }, { age: 30 });
 
-// type Vehicle = Car | Truck;
+// console.log(mergedObj.name);
 
-// const v1 = new Car();
-// const v2 = new Truck();
+interface Lengthy {
+  length: number;
+}
 
-// function useVehicle(vehicle: Vehicle) {
-//   vehicle.drive();
-//   if (vehicle instanceof Truck) {
-//     vehicle.loadCargo(10);
-//   }
-// }
+function countAndDescribe<T extends Lengthy>(element: T): [T, string] {
+  let descriptionText = "値がありません";
+  if (element.length > 0) {
+    descriptionText = "値は" + element.length + "個です。";
+  }
+  return [element, descriptionText];
+}
 
-// useVehicle(v1);
-// useVehicle(v2);
+// console.log(countAndDescribe(["おつかれさまです"]));
 
-// interface Bird {
-//   type: "bird";
-//   flyingSpeed: number;
-// }
+// keyofをつかった制約
+function extractAndConvert<T extends object, U extends keyof T>(
+  obj: T,
+  key: U
+) {
+  return "Value: " + obj[key];
+}
 
-// interface Horse {
-//   type: "horse";
-//   runningSpeed: number;
-// }
+extractAndConvert({ name: "Max" }, "name");
 
-// type Animal = Bird | Horse;
+// Genericクラス
+// T は統一できていれば何の型でもよいことを意味する
+// プリミティブ型に限定する
+// Union型のほうが向いてるケース：関数やメソッドを呼び出すごとに型を選びたい場合
+// Generic型が向いてるケース：型を統一したい場合
+class DataStorage<T extends string | number | boolean> {
+  private data: T[] = [];
 
-// function moveAnimal(animal: Animal) {
-//   let speed;
-//   switch (animal.type) {
-//     case "bird":
-//       speed = animal.flyingSpeed;
-//       break;
-//     case "horse":
-//       speed = animal.runningSpeed;
-//   }
-//   console.log("移動速度: " + speed);
-// }
+  addItem(item: T) {
+    this.data.push(item);
+  }
 
-// moveAnimal({ type: "bird", flyingSpeed: 10 });
+  removeItem(item: T) {
+    this.data.splice(this.data.indexOf(item), 1);
+  }
 
-// // const userInputElement = <HTMLInputElement>(
-// //   document.getElementById("user-input")!
-// // );
-// const userInputElement = document.getElementById("user-input");
+  getItems() {
+    return [...this.data];
+  }
+}
 
-// if (userInputElement) {
-//   (userInputElement as HTMLInputElement).value = "こんにちは"; // !マークの代わり
-// }
+const textStorage = new DataStorage<string>();
+// // textStorage.addItem(10); // error
+// textStorage.addItem("Data1");
+// textStorage.addItem("Data2");
+// textStorage.removeItem("Data1");
+// console.log(textStorage.getItems());
 
-// interface ErrorContainer {
-//   [prop: string]: string;
-// }
+// const objStorage = new DataStorage<object>();
+// objStorage.addItem({ name: "Max" });
+// objStorage.addItem({ name: "Manu" });
 
-// const errorBag: ErrorContainer = {
-//   email: "正しいメールアドレスではありません",
-//   userName: "ユーサー名に記号を含めることはできません",
-// };
+// objStorage.removeItem({ name: "Max" }); // objectは参照型なのでこれは上の{ name: "Max" }とは別のオブジェクト
+// console.log(objStorage.getItems()); // { name: "Max" }は削除されていない
+
+interface CourseGoal {
+  title: string;
+  description: string;
+  completeUntil: Date;
+}
+
+function createCourseGoal(
+  title: string,
+  description: string,
+  date: Date
+): CourseGoal {
+  let courseGoal: Partial<CourseGoal> = {}; // ユーティリティ型のPartialで一時的に型を切り替える
+  courseGoal.title = title;
+  courseGoal.description = description;
+  courseGoal.completeUntil = date;
+  return courseGoal as CourseGoal;
+  // return {
+  //   title: title,
+  //   description: description,
+  //   completeUntil: date,
+  // };
+}
+
+const names: Readonly<string>[] = ["Max", "Anna"];
+// names.push("Manu");
