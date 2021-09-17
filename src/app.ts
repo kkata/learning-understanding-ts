@@ -49,6 +49,8 @@ extractAndConvert({ name: "Max" }, "name");
 // Genericクラス
 // T は統一できていれば何の型でもよいことを意味する
 // プリミティブ型に限定する
+// Union型のほうが向いてるケース：関数やメソッドを呼び出すごとに型を選びたい場合
+// Generic型が向いてるケース：型を統一したい場合
 class DataStorage<T extends string | number | boolean> {
   private data: T[] = [];
 
