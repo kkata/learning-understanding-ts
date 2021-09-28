@@ -1,108 +1,166 @@
-// const names: Array<string> = []; // string[]
-
-// // promiseは他の型も返すので、それをGeneric型で定義する
-// // 戻り値の型がわかることで、TypeScriptのサポートが利くようになる
-// const promise: Promise<string> = new Promise((resolve, reject) => {
-//   setTimeout(() => {
-//     resolve("Done!");
-//   });
-// });
-
-// promise.then((data) => {
-//   data.split("");
-// });
-
-// TとUは関数を呼び出したときに推定される
-// extends で制約を付けられる
-function merge<T extends object, U extends object>(obgA: T, objB: U) {
-  return Object.assign(obgA, objB);
+// デコレータ関数の作成はJavaScriptの順序どおり、上から下に行われる
+// デコレータ関数の実行は下から上に向かって実行される
+function Logger(logString: string) {
+  console.log("LOGGER ファクトリ");
+  return function (constructor: Function) {
+    console.log(logString);
+    console.log(constructor);
+  };
 }
 
-const mergedObj = merge({ name: "Max", hobbies: ["Sports"] }, { age: 30 });
-
-// console.log(mergedObj.name);
-
-interface Lengthy {
-  length: number;
+function WithTemplate(template: string, hookId: string) {
+  console.log("TEMPLATE ファクトリ");
+  return function <T extends { new (...args: any[]): { name: string } }>(
+    originalConstructor: T
+  ) {
+    return class extends originalConstructor {
+      constructor(..._: any[]) {
+        super();
+        console.log("テンプレートを表示");
+        const hookEl = document.getElementById(hookId);
+        if (hookEl) {
+          hookEl.innerHTML = template;
+          hookEl.querySelector("h1")!.textContent = this.name;
+        }
+      }
+    };
+  };
 }
 
-function countAndDescribe<T extends Lengthy>(element: T): [T, string] {
-  let descriptionText = "値がありません";
-  if (element.length > 0) {
-    descriptionText = "値は" + element.length + "個です。";
+// @Logger("ログ出力中 - Person")
+@Logger("ログ出力中")
+@WithTemplate("<h1>Personオブジェクト</h1>", "app")
+class Person {
+  name = "Max";
+
+  constructor() {
+    console.log("Personオブジェクトを作成中...");
   }
-  return [element, descriptionText];
+}
+// const pers = new Person();
+
+// console.log(pers);
+
+// ---
+
+// Property デコレータはClassが定義されたときに実行される = constructorが実行されたとき
+function Log(target: any, propertyName: string | Symbol) {
+  console.log("Property デコレータ");
+  console.log(target, propertyName);
 }
 
-// console.log(countAndDescribe(["おつかれさまです"]));
+function Log2(target: any, name: string, descriptor: PropertyDescriptor) {
+  console.log("Accessor デコレータ");
+  console.log(target);
+  console.log(name);
+  console.log(descriptor);
+}
 
-// keyofをつかった制約
-function extractAndConvert<T extends object, U extends keyof T>(
-  obj: T,
-  key: U
+function Log3(
+  target: any,
+  name: string | Symbol,
+  descriptor: PropertyDescriptor
 ) {
-  return "Value: " + obj[key];
+  console.log("Method デコレータ");
+  console.log(target);
+  console.log(name);
+  console.log(descriptor);
 }
 
-extractAndConvert({ name: "Max" }, "name");
-
-// Genericクラス
-// T は統一できていれば何の型でもよいことを意味する
-// プリミティブ型に限定する
-// Union型のほうが向いてるケース：関数やメソッドを呼び出すごとに型を選びたい場合
-// Generic型が向いてるケース：型を統一したい場合
-class DataStorage<T extends string | number | boolean> {
-  private data: T[] = [];
-
-  addItem(item: T) {
-    this.data.push(item);
-  }
-
-  removeItem(item: T) {
-    this.data.splice(this.data.indexOf(item), 1);
-  }
-
-  getItems() {
-    return [...this.data];
-  }
+function Log4(target: any, name: string | Symbol, position: number) {
+  console.log("Parameter デコレータ");
+  console.log(target);
+  console.log(name);
+  console.log(position);
 }
 
-const textStorage = new DataStorage<string>();
-// // textStorage.addItem(10); // error
-// textStorage.addItem("Data1");
-// textStorage.addItem("Data2");
-// textStorage.removeItem("Data1");
-// console.log(textStorage.getItems());
-
-// const objStorage = new DataStorage<object>();
-// objStorage.addItem({ name: "Max" });
-// objStorage.addItem({ name: "Manu" });
-
-// objStorage.removeItem({ name: "Max" }); // objectは参照型なのでこれは上の{ name: "Max" }とは別のオブジェクト
-// console.log(objStorage.getItems()); // { name: "Max" }は削除されていない
-
-interface CourseGoal {
+class Product {
+  @Log
   title: string;
-  description: string;
-  completeUntil: Date;
+  private _price: number;
+
+  @Log2
+  set price(val: number) {
+    if (val > 0) {
+      this._price = val;
+    } else {
+      throw new Error("不正な価格です 0 以下は設定できません");
+    }
+  }
+
+  constructor(t: string, p: number) {
+    this.title = t;
+    this._price = p;
+  }
+
+  @Log3
+  getPriceWithTax(@Log4 tax: number) {
+    return this._price * (1 + tax);
+  }
 }
 
-function createCourseGoal(
-  title: string,
-  description: string,
-  date: Date
-): CourseGoal {
-  let courseGoal: Partial<CourseGoal> = {}; // ユーティリティ型のPartialで一時的に型を切り替える
-  courseGoal.title = title;
-  courseGoal.description = description;
-  courseGoal.completeUntil = date;
-  return courseGoal as CourseGoal;
-  // return {
-  //   title: title,
-  //   description: description,
-  //   completeUntil: date,
-  // };
+const p1 = new Product("Book", 100);
+const p2 = new Product("Book2", 200);
+
+function Autobind(_1: any, _2: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value;
+  const adjustedDescriptor: PropertyDescriptor = {
+    configurable: true,
+    enumerable: false,
+    get() {
+      const boundFn = originalMethod.bind(this);
+      return boundFn;
+    },
+  };
+  return adjustedDescriptor;
+}
+class Printer {
+  message = "クリックしました";
+  @Autobind
+  showMessage() {
+    console.log(this.message);
+  }
 }
 
-const names: Readonly<string>[] = ["Max", "Anna"];
-// names.push("Manu");
+const p = new Printer();
+
+const button = document.querySelector("button")!;
+button.addEventListener("click", p.showMessage);
+
+// ---
+
+function Required() {}
+
+function PositiveNumber() {}
+
+function validate(obj: object) {}
+
+class Course {
+  @Required
+  title: string;
+  @PositiveNumber
+  price: number;
+
+  constructor(t: string, p: number) {
+    this.title = t;
+    this.price = p;
+  }
+}
+
+const courseForm = document.querySelector("form")!;
+courseForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const titleEl = document.getElementById("title") as HTMLInputElement;
+  const priceEl = document.getElementById("price") as HTMLInputElement;
+
+  const title = titleEl.value;
+  const price = priceEl.valueAsNumber;
+
+  const createdCourse = new Course(title, price);
+
+  if (!validate(createdCourse)) {
+    alert("正しく入力してください");
+    return;
+  }
+  console.log(createdCourse);
+});
